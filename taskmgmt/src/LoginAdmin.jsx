@@ -16,7 +16,7 @@ function LoginAdmin() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/login",
+        "http://localhost:5000/api/login-admin",
         formData
       );
 
@@ -25,7 +25,7 @@ function LoginAdmin() {
         localStorage.setItem("user", JSON.stringify(response.data.user));
 
         // Redirect to homepage
-        navigate("/homepage");
+        navigate("/admin-dashboard");
       } else {
         alert("Login failed!");
       }
@@ -37,7 +37,7 @@ function LoginAdmin() {
 
   return (
     <div className="login-container">
-      <h2>User Login</h2>
+      <h2>Admin Login</h2>
       <form className="login-form" onSubmit={handleSubmit}>
         <input
           className="login-input"
@@ -63,7 +63,7 @@ function LoginAdmin() {
       </form>
       <div className="login-link">
         <p>
-          No account? <Link to="/">register here</Link>
+          Not an admin? <Link to="/login">sign in here</Link>
         </p>
       </div>
     </div>

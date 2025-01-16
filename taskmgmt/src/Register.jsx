@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
+import "./Register.css"; // Make sure to create or modify this CSS file
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -19,7 +20,7 @@ function Register() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/register",
+        "http://localhost:5000/api/adminregister",
         formData
       );
       alert(response.data.message);
@@ -30,52 +31,65 @@ function Register() {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="firstName"
-          placeholder="First Name"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="lastName"
-          placeholder="Last Name"
-          value={formData.lastName}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="phoneNumber"
-          placeholder="Phone Number"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-        />
-        <button type="submit">Register</button>
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Login here</Link>
+    <div className="register-container">
+      <h2 className="register-title">Register</h2>
+
+      <div className="form-container">
+        <form onSubmit={handleSubmit} className="register-form">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="register-input"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            className="register-input"
+          />
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleChange}
+            required
+            className="register-input"
+          />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChange={handleChange}
+            required
+            className="register-input"
+          />
+          <input
+            type="text"
+            name="phoneNumber"
+            placeholder="Phone Number"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            className="register-input"
+          />
+          <button type="submit" className="register-button">
+            Register
+          </button>
+        </form>
+      </div>
+      <p className="register-text">
+        Already have an account?{" "}
+        <Link to="/login" className="register-link">
+          Login here
+        </Link>
       </p>
     </div>
   );
