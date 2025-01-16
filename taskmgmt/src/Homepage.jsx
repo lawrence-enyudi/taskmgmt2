@@ -53,13 +53,13 @@ function Homepage() {
     try {
       await axios.put(`http://localhost:5000/api/update-task-status`, {
         taskId,
-        status: "To Reviewing",
+        status: "To Review",
       });
 
       // Update the task status locally
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
-          task.id === taskId ? { ...task, status: "To Reviewing" } : task
+          task.id === taskId ? { ...task, status: "To Review" } : task
         )
       );
     } catch (error) {
