@@ -34,6 +34,7 @@ function Homepage() {
   const getCardColor = (status) => {
     if (status === "Completed") return "#cfffca";
     if (status === "To Review") return "#ffe1ca";
+    if (status === "Rejected") return "#ffb3b3";
     return "white";
   };
 
@@ -72,16 +73,30 @@ function Homepage() {
     navigate("/login");
   };
 
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const navigateToModeratorHomepage = () => {
+    navigate("/moderator-homepage");
+  };
+
   return (
     <div className="homepage-container">
       {/* Top Bar with Welcome and Logout */}
       <div className="top-bar">
-        <h2 className="homepage-title">
-          Welcome, {JSON.parse(localStorage.getItem("user")).first_name}
-        </h2>
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
+        <h2 className="homepage-title">Welcome, {user.first_name}</h2>
+        <div>
+          {user.role === "Moderator" && (
+            <button
+              className="moderator-btn"
+              onClick={navigateToModeratorHomepage}
+            >
+              Moderator Tasks
+            </button>
+          )}
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       </div>
 
       {loading ? (

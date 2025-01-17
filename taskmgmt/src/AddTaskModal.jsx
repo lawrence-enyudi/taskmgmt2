@@ -7,7 +7,7 @@ function AddTaskModal({ users, handleClose, refreshTasks }) {
     userId: "",
     title: "",
     description: "",
-    status: "pending",
+    status: "Pending",
     due_date: "",
     difficulty: "Easy",
     priority_level: "Low Priority",

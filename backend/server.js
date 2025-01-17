@@ -101,6 +101,7 @@ app.post("/api/login", (req, res) => {
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
+            role: user.role,
           },
         });
       } else {
@@ -383,6 +384,75 @@ app.delete("/api/delete-user/:id", (req, res) => {
     } else {
       res.status(200).send({ message: "User deleted successfully" });
     }
+  });
+});
+
+// Get all tasks with status "To Review"
+app.get("/api/get-to-review-tasks", (req, res) => {
+  const query = "SELECT * FROM tasks WHERE status = ?";
+  const status = "To Review";
+
+  db.query(query, [status], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send({ message: "Error fetching tasks" });
+    }
+    res.status(200).send(results);
+  });
+});
+// Update task status
+app.put("/api/update-task-status", (req, res) => {
+  const { taskId, status } = req.body;
+
+  if (!taskId || !status) {
+    return res.status(400).send({ message: "taskId and status are required" });
+  }
+
+  const query = "UPDATE tasks SET status = ? WHERE id = ?";
+
+  db.query(query, [status, taskId], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send({ message: "Error updating task status" });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).send({ message: "Task not found" });
+    }
+
+    res.status(200).send({ message: "Task status updated successfully" });
+  });
+});
+
+app.get("/api/get-task-stats", (req, res) => {
+  const query = `
+    SELECT 
+      user_accounts.id AS user_id,
+      user_accounts.first_name,
+      user_accounts.last_name,
+      COUNT(tasks.id) AS total_tasks,
+      SUM(CASE WHEN tasks.status = 'Completed' THEN 1 ELSE 0 END) AS completed_tasks
+    FROM user_accounts
+    LEFT JOIN tasks ON user_accounts.id = tasks.user_id
+    GROUP BY user_accounts.id;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching task stats:", err);
+      return res.status(500).send({ message: "Error fetching task stats" });
+    }
+
+    // Transform the results into the desired format
+    const taskStats = results.map((row) => ({
+      userId: row.user_id,
+      firstName: row.first_name,
+      lastName: row.last_name,
+      completed: row.completed_tasks || 0,
+      total: row.total_tasks || 0,
+    }));
+
+    res.status(200).send(taskStats);
   });
 });
 

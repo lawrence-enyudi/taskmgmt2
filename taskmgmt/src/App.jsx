@@ -6,6 +6,7 @@ import Login from "./LoginUser"; // Ensure the correct file path
 import LoginAdmin from "./LoginAdmin";
 import AdminDashboard from "./AdminDashboard";
 import Homepage from "./Homepage";
+import ModeratorHomepage from "./ModeratorHomepage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/homepage" element={<Homepage />} />
+        <Route path="/moderator-homepage" element={<ModeratorHomepage />} />
 
         <Route path="/login-admin" element={<LoginAdmin />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />

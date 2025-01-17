@@ -4,6 +4,7 @@ import "./AccountsPane.css";
 
 function AccountsPane() {
   const [users, setUsers] = useState([]);
+  const [userTaskStats, setUserTaskStats] = useState({});
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -17,6 +18,23 @@ function AccountsPane() {
 
   useEffect(() => {
     fetchUsers();
+    fetchTaskStats();
+  }, []);
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/get-task-stats")
+      .then((response) => {
+        // Transform array of stats into a dictionary for easier lookup
+        const stats = response.data.reduce((acc, stat) => {
+          acc[stat.userId] = {
+            completed: stat.completed,
+            total: stat.total,
+          };
+          return acc;
+        }, {});
+        setUserTaskStats(stats);
+      })
+      .catch((error) => console.error("Error fetching task stats", error));
   }, []);
 
   const fetchUsers = () => {
@@ -25,10 +43,21 @@ function AccountsPane() {
     });
   };
 
+  const fetchTaskStats = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/get-task-stats"
+      );
+      setUserTaskStats(response.data);
+    } catch (error) {
+      console.error("Error fetching task stats", error);
+    }
+  };
+
   const handleAddUser = () => {
     axios
       .post("http://localhost:5000/api/register", newUser)
-      .then((response) => {
+      .then(() => {
         fetchUsers();
         setShowAddModal(false);
       })
@@ -41,7 +70,7 @@ function AccountsPane() {
         `http://localhost:5000/api/update-user/${selectedUser.id}`,
         selectedUser
       )
-      .then((response) => {
+      .then(() => {
         fetchUsers();
         setShowEditModal(false);
       })
@@ -51,7 +80,7 @@ function AccountsPane() {
   const handleDeleteUser = () => {
     axios
       .delete(`http://localhost:5000/api/delete-user/${selectedUser.id}`)
-      .then((response) => {
+      .then(() => {
         fetchUsers();
         setShowEditModal(false);
       })
@@ -81,20 +110,27 @@ function AccountsPane() {
             <th>Last Name</th>
             <th>Phone Number</th>
             <th>Role</th>
+            <th>Tasks Completed</th>
             <th>Created At</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user.id} onClick={() => handleOpenEditModal(user)}>
-              <td>{user.email}</td>
-              <td>{user.first_name}</td>
-              <td>{user.last_name}</td>
-              <td>{user.phone_number}</td>
-              <td>{user.role}</td>
-              <td>{new Date(user.created_at).toLocaleDateString()}</td>
-            </tr>
-          ))}
+          {users.map((user) => {
+            const stats = userTaskStats[user.id] || { completed: 0, total: 0 };
+            return (
+              <tr key={user.id} onClick={() => handleOpenEditModal(user)}>
+                <td>{user.email}</td>
+                <td>{user.first_name}</td>
+                <td>{user.last_name}</td>
+                <td>{user.phone_number}</td>
+                <td>{user.role}</td>
+                <td>
+                  {stats.completed}/{stats.total}
+                </td>
+                <td>{new Date(user.created_at).toLocaleDateString()}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
@@ -150,8 +186,6 @@ function AccountsPane() {
       {/* Edit User Modal */}
       {showEditModal && selectedUser && (
         <div className="modal-overlay">
-          {" "}
-          {/* Modal overlay added */}
           <div className="modal">
             <h3>Edit User</h3>
             <label>Email:</label>
@@ -207,7 +241,7 @@ function AccountsPane() {
               <option value="Moderator">Moderator</option>
             </select>
             <div className="buttons">
-              <button onClick={() => setShowEditModal(false)}>Close</button>{" "}
+              <button onClick={() => setShowEditModal(false)}>Close</button>
               <button onClick={handleUpdateUser}>Update</button>
               <button onClick={handleDeleteUser}>Delete</button>
             </div>
