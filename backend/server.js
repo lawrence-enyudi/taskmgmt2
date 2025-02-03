@@ -389,7 +389,12 @@ app.delete("/api/delete-user/:id", (req, res) => {
 
 // Get all tasks with status "To Review"
 app.get("/api/get-to-review-tasks", (req, res) => {
-  const query = "SELECT * FROM tasks WHERE status = ?";
+  const query = `SELECT 
+        tasks.id, tasks.title, tasks.description, tasks.status, tasks.due_date, 
+        user_accounts.first_name, user_accounts.last_name 
+      FROM tasks 
+      JOIN user_accounts ON tasks.user_id = user_accounts.id
+      WHERE tasks.status = ?;`
   const status = "To Review";
 
   db.query(query, [status], (err, results) => {

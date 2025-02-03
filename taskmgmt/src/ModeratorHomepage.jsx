@@ -82,6 +82,11 @@ function ModeratorHomepage() {
             <div className="tasks-card-container">
               {tasks.map((task) => (
                 <div key={task.id} className="task-card">
+                  <div className="names">
+                  <p className="task-title">{`For: ${task.first_name} ${task.last_name}`}</p>
+                  
+                  </div>
+
                   <h3 className="task-title">{task.title}</h3>
                   <p className="task-description">{task.description}</p>
                   <div className="task-details">

@@ -48,3 +48,13 @@
 .confirm-task-btn:hover {
   background-color: #218838;
 }
+
+.names{
+  display: flex;
+  flex-direction: row;
+  color: #4e4e4e;
+}
+
+.namep{
+  margin: 0;
+}
